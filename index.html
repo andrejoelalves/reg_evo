@@ -19,7 +19,7 @@
 		<script src="https://unpkg.com/esri-leaflet@2.4.1/dist/esri-leaflet.js" integrity="sha512-xY2smLIHKirD03vHKDJ2u4pqeHA7OQZZ27EjtqmuhDguxiUvdsOuXMwkg16PQrm9cgTmXtoxA6kwr8KBy3cdcw=="crossorigin=""></script>
 		
 		
-		<script type="text/javascript" src="casos_10k.geojson"></script>
+		<script type="text/javascript" src="casos.geojson"></script>
 
 		<script type="text/javascript"></script>
 
@@ -30,7 +30,7 @@
             position: absolute;
             bottom: 15px;
             right: 10px;
-            width: 160px;
+            width: 170px;
             margin: 5px auto;
             padding: 6px 8px;
 			line-height: 18px;
@@ -86,7 +86,7 @@
 			extensao = L.latLngBounds(sudoeste, nordeste);
 	
 	var map = L.map('map', {
-			center: [37.6, -15],
+			center: [37.6, -5],
 			zoom:5,
 			maxZoom: 12,
 			minZoom: 5,
@@ -99,7 +99,7 @@
 		  map.attributionControl.addAttribution('');
 		  
           //change the file name to yours
-            $.getJSON('casos.geojson')  // The getJSON() method is used to get JSON data
+            $.getJSON('ARS_casos.geojson')  // The getJSON() method is used to get JSON data
             .done(function(data) {
                 var info = processData(data);
                 createPropSymbols(info.timestamps, data);
@@ -108,7 +108,7 @@
             });
 		
 
-		geojson = L.geoJson(x, {
+		geojson = L.geoJson(dados, {
 		style: style,
 		}).addTo(map);
 			
@@ -207,7 +207,7 @@
                   var radius = calcPropRadius(props[timestamp]); // circle radius, calculation function defined below
 
                   // pop-up information (when mouseover) for each city is also defined here
-                  var popupContent = '<div ALIGN="CENTER">' +'<span style = "font-weight:bold; color:black"</span>' +props.Concelho + '<div ALIGN="LEFT">' + '<span style = "font-weight:bold; color: #c62121"</span>' + String(props[timestamp]) + '<span style="font-weight:normal; color:black"</span> casos confirmados</font>';
+                  var popupContent = '<div ALIGN="CENTER">' +'<span style = "font-weight:bold; color:black"</span>' +props.NOME + '<div ALIGN="LEFT">' + '<span style = "font-weight:bold; color: #c62121"</span>' + String(props[timestamp]) + '<span style="font-weight:normal; color:black"</span> casos confirmados</font>';
 
                   layer.setRadius(radius);  // Leaflet method for setting the radius of a circle
                   layer.bindPopup(popupContent, { offset: new L.Point(0,-radius) }); // bind the popup content, with an offset
@@ -217,7 +217,7 @@
             // calculate the radius of the proportional symbols based on area
             function calcPropRadius(attributeValue) {
 			  //console.log("atributo " + attributeValue);
-              var scaleFactor = 1.2;   // the scale factor is used to scale the values; the units of the radius are in meters
+              var scaleFactor = 0.3;   // the scale factor is used to scale the values; the units of the radius are in meters
                                          // you may determine the scale factor accordingly based on the range of the values and the mapping scale
               var area = attributeValue * scaleFactor;
 
@@ -240,13 +240,13 @@
 
               // Define the labels of the time slider as an array of strings
               // Modify this for your data
-              var labels = ["23/03/2020", "24/03/2020", "25/03/2020", "26/03/2020", "27/03/2020", "28/03/2020", "31/03/2020", "01/04/2020", "04/04/2020", "07/04/2020", "08/04/2020", "09/04/2020", "10/04/2020", "11/04/2020", "12/04/2020", "13/04/2020", "14/04/2020", "15/04/2020", "16/04/2020", "17/04/2020", "18/04/2020", "19/04/2020", "20/04/2020", "21/04/2020", "22/04/2020", "23/04/2020", "24/04/2020", "25/04/2020", "26/04/2020", "27/04/2020", "28/04/2020", "29/04/2020", "30/04/2020", "01/05/2020", "02/05/2020", "03/05/2020", "04/05/2020", "05/05/2020", "06/05/2020", "07/05/2020", "08/05/2020", "09/05/2020", "10/05/2020", "11/05/2020", "12/05/2020", "13/05/2020", "14/05/2020", "15/05/2020", "16/05/2020", "17/05/2020", "18/05/2020", "19/05/2020", "20/05/2020", "21/05/2020", "22/05/2020", "23/05/2020", "24/05/2020", "25/05/2020", "26/05/2020", "27/05/2020", "28/05/2020", "29/05/2020", "30/05/2020", "31/05/2020", "01/06/2020", "02/06/2020", "03/06/2020", "04/06/2020", "05/06/2020", "06/06/2020", "07/06/2020", "08/06/2020", "09/06/2020", "10/06/2020", "11/06/2020", "12/06/2020", "13/06/2020", "14/06/2020", "15/06/2020", "16/06/2020", "17/06/2020", "18/06/2020", "19/06/2020", "20/06/2020", "21/06/2020", "22/06/2020", "23/06/2020", "24/06/2020", "25/06/2020", "26/06/2020", "27/06/2020", "28/06/2020", "29/06/2020", "30/06/2020", "01/07/2020", "02/07/2020", "03/07/2020", "04/07/2020", "05/07/2020", "06/07/2020", "07/07/2020", "08/07/2020", "09/07/2020", "10/07/2020", "11/07/2020", "12/07/2020", "13/07/2020", "14/07/2020", "15/07/2020", "16/07/2020", "17/07/2020", "18/07/2020", "19/07/2020", "20/07/2020", "21/07/2020"];
+              var labels = ["04/03/2020", "05/03/2020", "06/03/2020", "07/03/2020", "08/03/2020", "09/03/2020", "10/03/2020", "11/03/2020", "12/03/2020", "13/03/2020", "14/03/2020", "15/03/2020", "16/03/2020", "17/03/2020", "18/03/2020", "19/03/2020", "20/03/2020", "21/03/2020", "22/03/2020", "23/03/2020", "24/03/2020", "25/03/2020", "26/03/2020", "27/03/2020", "28/03/2020", "29/03/2020", "30/03/2020", "31/03/2020", "01/04/2020", "02/04/2020", "03/04/2020", "04/04/2020", "05/04/2020", "06/04/2020", "07/04/2020", "08/04/2020", "09/04/2020", "10/04/2020", "11/04/2020", "12/04/2020", "13/04/2020", "14/04/2020", "15/04/2020", "16/04/2020", "17/04/2020", "18/04/2020", "19/04/2020", "20/04/2020", "21/04/2020", "22/04/2020", "23/04/2020", "24/04/2020", "25/04/2020", "26/04/2020", "27/04/2020", "28/04/2020", "29/04/2020", "30/04/2020", "01/05/2020", "02/05/2020", "03/05/2020", "04/05/2020", "05/05/2020", "06/05/2020", "07/05/2020", "08/05/2020", "09/05/2020", "10/05/2020", "11/05/2020", "12/05/2020", "13/05/2020", "14/05/2020", "15/05/2020", "16/05/2020", "17/05/2020", "18/05/2020", "19/05/2020", "20/05/2020", "21/05/2020", "22/05/2020", "23/05/2020", "24/05/2020", "25/05/2020", "26/05/2020", "27/05/2020", "28/05/2020", "29/05/2020", "30/05/2020", "31/05/2020", "01/06/2020", "02/06/2020", "03/06/2020", "04/06/2020", "05/06/2020", "06/06/2020", "07/06/2020", "08/06/2020", "09/06/2020", "10/06/2020", "11/06/2020", "12/06/2020", "13/06/2020", "14/06/2020", "15/06/2020", "16/06/2020", "17/06/2020", "18/06/2020", "19/06/2020", "20/06/2020", "21/06/2020", "22/06/2020", "23/06/2020", "24/06/2020", "25/06/2020", "26/06/2020", "27/06/2020", "28/06/2020", "29/06/2020", "30/06/2020", "01/07/2020", "02/07/2020", "03/07/2020", "04/07/2020", "05/07/2020", "06/07/2020", "07/07/2020", "08/07/2020", "09/07/2020", "10/07/2020", "11/07/2020"];
 				//console.log("max" + timestamps[timestamps.length-1]);
 				//console.log("min " + timestamps[0]);
               $(slider)
                   .attr({
 					'type':'range',
-					'max': timestamps[timestamps.length-1],
+					'max': timestamps[129],
 					'min':timestamps[0],
 					'step': 1, // Change this to match the numeric interval between adjacent timestamps
 					'value': String(timestamps[0])
@@ -259,7 +259,7 @@
               return slider;
             }
             sliderControl.addTo(map);
-            createTimeLabel("23/03/2020"); //The starting timestamp label
+            createTimeLabel("04/03/2020"); //The starting timestamp label
           }
 
 
@@ -283,7 +283,7 @@
 			  
 			  //var largeDiameter = Math.sqrt(1000*5/Math.PI),
                   //smallDiameter = largeDiameter/2;
-			    var largeDiameter = Math.sqrt((max*1.2)/Math.PI)*2;
+			    var largeDiameter = Math.sqrt((max*0.3)/Math.PI)*2;
 				var smallDiameter = largeDiameter/2;
 				console.log("largeDiameter " + max);
 				console.log("smallDiameter " + min);
@@ -308,7 +308,7 @@
                   'left': smallDiameter/2
               })
 
-              $("#legend-small-label").html((max/2).toLocaleString());
+              $("#legend-small-label").html((max/2+0.5).toLocaleString());
 
               $("#legend-small-label").css({
                   'top': smallDiameter - 8,
