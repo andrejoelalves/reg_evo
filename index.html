@@ -30,7 +30,7 @@
             position: absolute;
             bottom: 15px;
             right: 10px;
-            width: 170px;
+            width: 165px;
             margin: 5px auto;
             padding: 6px 8px;
 			line-height: 18px;
@@ -38,7 +38,26 @@
 			box-shadow: 0 0 15 px rgba(0,0,0,0.2);
             border-radius: 5px;
             z-index: 800;
+			side-panel, 
+			#temporal-legend {
+			padding: 6px 10px;
+    		font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+    		background: rgba(255,255,255,0.8);
+    		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    		border-radius: 5px;	
+	}
           }
+		  .temporal-legend {
+   		padding: 6px 10px;
+    		font: 14px/16px Arial, Helvetica, sans-serif;
+   		background: transaparent;
+    		background: rgba(255,255,255,0.8);
+    		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    		border-radius: 5px;
+			
+			}
+			
 		  #legend {
             position: relative;
             margin: 5px 0;
@@ -55,12 +74,12 @@
 				left: 0px;
 			}
 		  #legend hr.small, #legend hr.large {
-				width: 60px;
-				color: grey;
+				width: 0px;
+				color: transparent;
 				position: relative;
 				top: 0px;
 				left: -8px;
-			}
+
       </style>
   </head>
 
@@ -69,7 +88,7 @@
 
     <section id="side-panel">
 
-        <FONT SIZE=3><b>Número de casos confirmados</b> <br> </font>  <FONT SIZE=1> Fontes de dados: <a href="https://covid19.min-saude.pt/relatorio-de-situacao/" target="_blank">DGS</a> | <a href="https://www.ine.pt/xportal/xmain?xpid=INE&xpgid=ine_indicadores&indOcorrCod=0008273&xlang=pt" target="_blank">INE</a> <br> <br> </font>
+        <FONT SIZE=2 style = "font-family:verdana"><b>Número de casos importados</b> <br> </font>  <FONT SIZE=1 style = "font-family:verdana"> Fonte dos dados: <a href="https://covid19.min-saude.pt/relatorio-de-situacao/" target="_blank">DGS</a> <br> <br> </font><br> <br> </font>
         <div id='legend'>
             <div id="legend-large"></div>
             <div id="legend-small"></div>
