@@ -1,160 +1,132 @@
-
-<!--DOCTYPE html-->
-<html lang="en,pt">
+<!DOCTYPE html>
+<html lang="en">
   <head>
       <meta charset="utf-8">
       <title>Casos|COVID-19</title>
 
-		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.3.4/dist/leaflet.css"
         integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
-        crossorigin=""/>   
-		
-	<!--Zoom Home-->
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css"/>           
-		
-		<link rel="stylesheet" href="style.css">
+        crossorigin=""/>
 
-		<script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
+      <script src="https://unpkg.com/leaflet@1.3.4/dist/leaflet.js"
         integrity="sha512-nMMmRyTVoLYqjP9hrbed9S+FzjZHW5gY1TWCHA5ckwXZBadntCNs8kEqAWdrb9O7rxbCaA4lKTIWjDXZxflOcA=="
         crossorigin=""></script>
 
-		<script src="https://code.jquery.com/jquery-3.3.1.min.js"
-        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
-        crossorigin="anonymous"></script>
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 
-		<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"
-        integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU="
-        crossorigin="anonymous"></script>
+        <script src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+		
 		<script src="https://unpkg.com/esri-leaflet@2.4.1/dist/esri-leaflet.js" integrity="sha512-xY2smLIHKirD03vHKDJ2u4pqeHA7OQZZ27EjtqmuhDguxiUvdsOuXMwkg16PQrm9cgTmXtoxA6kwr8KBy3cdcw=="crossorigin=""></script>
 		
-	<!--Mapa de base cinzento-->		
-		<script type="text/javascript" src="casos.geojson"></script>
-	
-	
+		
+		<script type="text/javascript" src="casos_10k.geojson"></script>
+
+		<script type="text/javascript"></script>
+
       <style>
-          html, body { margin: 0; padding: 0; height: 100%; }
+           html, body { margin: 0; padding: 0; height: 100%; }
           #map { min-height: 100%; }
-		  
-		  /* --- Zoom Home --- */
-		  .leaflet-bar a { background-color: #fff; border-bottom: 1px solid #ccc; color: #444; display: block; height: 26px; width: 26px; line-height: 1.45 !important; text-align: center; text-decoration: none; font: bold 18px  monospace; }
+		  #side-panel {
+            position: absolute;
+            bottom: 15px;
+            right: 10px;
+            width: 140x;
+            margin: 5px auto;
+            padding: 6px 8px;
+			line-height: 18px;
+            background: rgba(255, 255, 255, 0.9);
+			box-shadow: 0 0 15 px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            z-index: 800;
+			side-panel, 
+			#temporal-legend {
+			padding: 6px 10px;
+    		font: 14px/16px Arial, Helvetica, sans-serif;
+			background: white;
+    		background: rgba(255,255,255,0.8);
+    		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    		border-radius: 5px;	
+	}
+          }
+		  .temporal-legend {
+   		padding: 6px 10px;
+    		font: 14px/16px Arial, Helvetica, sans-serif;
+   		background: transaparent;
+    		background: rgba(255,255,255,0.8);
+    		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    		border-radius: 5px;
+			
+			}
+			
+		  #legend {
+            position: relative;
+            margin: 5px 0;
+			}
+		  #legend-large, #legend-small {
+				border: 2px solid red;
+				border-radius: 50%;
+				background: #F99999; 
+				position: absolute;
+			}
+		  #legend-large-label, #legend-small-label {
+				position: absolute;
+				top: 500px;
+				left: 0px;
+			}
+		  #legend hr.small, #legend hr.large {
+				width: 0px;
+				color: transparent;
+				position: relative;
+				top: 0px;
+				left: -8px;
       </style>
   </head>
 
   <body>
       <div id="map"></div>
 
+    <section id="side-panel">
+
+        <FONT SIZE=2 style = "font-family:verdana"><b>Número de casos importados</b> <br> </font>  <FONT SIZE=1 style = "font-family:verdana"> Fonte dos dados: <a href="https://covid19.min-saude.pt/relatorio-de-situacao/" target="_blank">DGS</a> <br> <br> </font>
+        <div id='legend'>
+            <div id="legend-large"></div>
+            <div id="legend-small"></div>
+            <div id="legend-large-label"></div>
+            <div id="legend-small-label"></div>
+        </div>
+        <!--<p>Dados disponibilizados pela DGS no site: <a href="https://covid19.min-saude.pt/">COVID-19</a></p>-->
+
+    </section>
+
       <script>
-          
-		  var sudoeste = L.latLng(-80, -167),
-			nordeste = L.latLng(75, 170),
+           var sudoeste = L.latLng(25, -29),
+			nordeste = L.latLng(44, 0),
 			extensao = L.latLngBounds(sudoeste, nordeste);
 	
-	
-		var map = L.map('map', {
-			zoomControl: false,
-			center: [25, 0],
-			zoom:1,
+	var map = L.map('map', {
+			center: [37.6, -15],
+			zoom:5,
 			maxZoom: 12,
-			minZoom: 1,
+			minZoom: 5,
 			maxBounds: extensao,
 		});
 			
-			var lat = 25; // __________Zoom Home
-			var lng = 0; // __________Zoom Home
-			var zoom = 1; // __________Zoom Home
-			
-			map.setView([lat, lng], zoom); // __________Zoom Home
-			
-         var layer = L.esri.basemapLayer('Gray').addTo(map);
+    var layer = L.esri.basemapLayer('Gray').addTo(map);
+
 		  
-		  // __________Zoom Home
+		  map.attributionControl.addAttribution('');
 		  
-		  // custom zoom bar control that includes a Zoom Home function
-L.Control.zoomHome = L.Control.extend({
-    options: {
-        position: 'topleft',
-        zoomInText: '+',
-        zoomInTitle: 'Zoom in',
-        zoomOutText: '-',
-        zoomOutTitle: 'Zoom out',
-        zoomHomeText: '<i class="fa fa-home" style="line-height:1.65;"></i>',
-        zoomHomeTitle: 'Zoom home'
-    },
-
-    onAdd: function (map) {
-        var controlName = 'gin-control-zoom',
-            container = L.DomUtil.create('div', controlName + ' leaflet-bar'),
-            options = this.options;
-
-        this._zoomInButton = this._createButton(options.zoomInText, options.zoomInTitle,
-        controlName + '-in', container, this._zoomIn);
-        this._zoomHomeButton = this._createButton(options.zoomHomeText, options.zoomHomeTitle,
-        controlName + '-home', container, this._zoomHome);
-        this._zoomOutButton = this._createButton(options.zoomOutText, options.zoomOutTitle,
-        controlName + '-out', container, this._zoomOut);
-
-        this._updateDisabled();
-        map.on('zoomend zoomlevelschange', this._updateDisabled, this);
-
-        return container;
-    },
-
-    onRemove: function (map) {
-        map.off('zoomend zoomlevelschange', this._updateDisabled, this);
-    },
-
-    _zoomIn: function (e) {
-        this._map.zoomIn(e.shiftKey ? 3 : 1);
-    },
-
-    _zoomOut: function (e) {
-        this._map.zoomOut(e.shiftKey ? 3 : 1);
-    },
-
-    _zoomHome: function (e) {
-        map.setView([lat, lng], zoom);
-    },
-
-    _createButton: function (html, title, className, container, fn) {
-        var link = L.DomUtil.create('a', className, container);
-        link.innerHTML = html;
-        link.href = '#';
-        link.title = title;
-
-        L.DomEvent.on(link, 'mousedown dblclick', L.DomEvent.stopPropagation)
-            .on(link, 'click', L.DomEvent.stop)
-            .on(link, 'click', fn, this)
-            .on(link, 'click', this._refocusOnMap, this);
-
-        return link;
-    },
-
-    _updateDisabled: function () {
-        var map = this._map,
-            className = 'leaflet-disabled';
-
-        L.DomUtil.removeClass(this._zoomInButton, className);
-        L.DomUtil.removeClass(this._zoomOutButton, className);
-
-        if (map._zoom === map.getMinZoom()) {
-            L.DomUtil.addClass(this._zoomOutButton, className);
-        }
-        if (map._zoom === map.getMaxZoom()) {
-            L.DomUtil.addClass(this._zoomInButton, className);
-        }
-    }
-});
-
-            $.getJSON('ARS_casos.geojson') 
+          //change the file name to yours
+            $.getJSON('casos.geojson')  // The getJSON() method is used to get JSON data
             .done(function(data) {
                 var info = processData(data);
-                createPropSymbols(info.timestamps, data);   
-                createSliderUI(info.timestamps);             
-				createLegend(info.min,info.max);            
-			});
-			
-			
-			geojson = L.geoJson(base, {
+                createPropSymbols(info.timestamps, data);
+                createSliderUI(info.timestamps);
+				drawLegend(info.min,info.max);
+            });
+		
+
+		geojson = L.geoJson(x, {
 		style: style,
 		}).addTo(map);
 			
@@ -183,10 +155,9 @@ L.Control.zoomHome = L.Control.extend({
 
                   // At each row, go through the columns/attributes to get the values
                   for (var attribute in properties) {
-                      if ( attribute != 'id' &&
-                           attribute != 'name' &&
-                           attribute != 'latitude' &&
-                           attribute != 'longitude' )   // != means NOT EQUAL TO
+                      if ( attribute != 'Concelho' &&
+                           attribute != 'COD_NUTS' &&
+                           attribute != 'POP_2018' )   // != means NOT EQUAL TO
                                                   // These three columns are NOT recorded
                                                   // Modify this part when mapping your own data
                       {
@@ -196,6 +167,7 @@ L.Control.zoomHome = L.Control.extend({
 
                               timestamps.push(attribute);  // The JS push() method adds new items to the end of an array
                                                            // and returns the new length of the array
+							  //console.log("timestamps " + timestamps);	
                           }
                           if (properties[attribute] < min) {
                               min = properties[attribute]; // record/update the current smaller values as the min
@@ -213,9 +185,10 @@ L.Control.zoomHome = L.Control.extend({
               }
             }
 
-          // ___________The function to draw the proportional symbols
+          // The function to draw the proportional symbols
             function createPropSymbols(timestamps, data) {
-
+			  //console.log("timestamps " + timestamps);
+			  //console.log("data " + data);
               cities = L.geoJson(data, {
 
                   // By default, Leaflet draws geojson points as simple markers
@@ -224,16 +197,16 @@ L.Control.zoomHome = L.Control.extend({
                       return L.circleMarker(latlng, { // we use circle marker for the points
                           fillColor: "#ff0000",  // fill color of the circles
                           color: '#ff0000',      // border color of the circles
-                          weight: 1,             // circle line weight in pixels
+                          weight: 2,             // circle line weight in pixels
                           fillOpacity: 0.5       // fill opacity (0-1)
                       }).on({
                           mouseover: function(e) {
                                 this.openPopup();
-                                this.setStyle({fillColor: '#fa9fb5'});  // fill color turns green when mouseover
+                                this.setStyle({fillColor: 'blue'});  // fill color turns blue when mouseover
                             },
                             mouseout: function(e) {
                                 this.closePopup();
-                                this.setStyle({fillColor: "#ff0000"});  // fill turns original color when mouseout
+                                this.setStyle({fillColor: '#ff0000'});  // fill turns original color when mouseout
                             }
                     });
                   }
@@ -243,7 +216,7 @@ L.Control.zoomHome = L.Control.extend({
                                               // When loaded, the map will first show proportional symbols with the first timestamp's data
             }
 
-            // ______________The function to update/resize each circle marker according to a value in the time series
+            // The function to update/resize each circle marker according to a value in the time series
             function updatePropSymbols(timestamp) {
 
               cities.eachLayer(function(layer) {  // eachLayer() is an Leaflet function to iterate over the layers/points of the map
@@ -252,7 +225,7 @@ L.Control.zoomHome = L.Control.extend({
                   var radius = calcPropRadius(props[timestamp]); // circle radius, calculation function defined below
 
                   // pop-up information (when mouseover) for each city is also defined here
-                  var popupContent = '<div ALIGN="CENTER">' +'<span style = "font-weight:bold; color:black"</span>' +props.NOME + '<div ALIGN="LEFT">' + '<span style = "font-weight:bold; color: #c62121"</span>' + String(props[timestamp]) + '<span style="font-weight:normal; color:black"</span> caso(s) confirmado(s)</font>';
+                  var popupContent = '<div ALIGN="CENTER">' +'<span style = "font-weight:bold; color:black"</span>' +props.Concelho + '<div ALIGN="LEFT">' + '<span style = "font-weight:bold; color: #c62121"</span>' + String(props[timestamp]) + '<span style="font-weight:normal; color:black"</span> casos confirmados</font>';
 
                   layer.setRadius(radius);  // Leaflet method for setting the radius of a circle
                   layer.bindPopup(popupContent, { offset: new L.Point(0,-radius) }); // bind the popup content, with an offset
@@ -261,38 +234,40 @@ L.Control.zoomHome = L.Control.extend({
 
             // calculate the radius of the proportional symbols based on area
             function calcPropRadius(attributeValue) {
-
-              var scaleFactor = 0.4;   // the scale factor is used to scale the values; the units of the radius are in meters
+			  //console.log("atributo " + attributeValue);
+              var scaleFactor = 1.2;   // the scale factor is used to scale the values; the units of the radius are in meters
                                          // you may determine the scale factor accordingly based on the range of the values and the mapping scale
               var area = attributeValue * scaleFactor;
 
               return Math.sqrt(area/Math.PI);  // the function return the radius of the circle to be used in the updatePropSymbols()
             }
 
-          // ______________Barra Time Slider
           function createSliderUI(timestamps) {
-            var sliderControl = L.control({ position: 'bottomleft'} ); // position of the slider
+            var sliderControl = L.control({ position: 'bottomleft'} );
+			// position of the slider
                               // Another use of L.control :)
+							  
             sliderControl.onAdd = function(map) {
               //initialize a range slider with mousedown control
                 var slider = L.DomUtil.create("input", "range-slider");
                 L.DomEvent.addListener(slider, 'mousedown', function(e) {
                     L.DomEvent.stopPropagation(e);
 				map.dragging.disable();
-				map.dragging.enable();		
+				map.dragging.enable();	
                 });
 
               // Define the labels of the time slider as an array of strings
               // Modify this for your data
-              var labels = ["04/03/2020", "05/03/2020", "06/03/2020", "07/03/2020", "08/03/2020", "09/03/2020", "10/03/2020", "11/03/2020", "12/03/2020", "13/03/2020", "14/03/2020", "15/03/2020", "16/03/2020", "17/03/2020", "18/03/2020", "19/03/2020", "20/03/2020", "21/03/2020", "22/03/2020", "23/03/2020", "24/03/2020", "25/03/2020", "26/03/2020", "27/03/2020", "28/03/2020", "29/03/2020", "30/03/2020", "31/03/2020", "01/04/2020", "02/04/2020", "03/04/2020", "04/04/2020", "05/04/2020", "06/04/2020", "07/04/2020", "08/04/2020", "09/04/2020", "10/04/2020", "11/04/2020", "12/04/2020", "13/04/2020", "14/04/2020", "15/04/2020", "16/04/2020", "17/04/2020", "18/04/2020", "19/04/2020", "20/04/2020", "21/04/2020", "22/04/2020", "23/04/2020", "24/04/2020", "25/04/2020", "26/04/2020", "27/04/2020", "28/04/2020", "29/04/2020", "30/04/2020", "01/05/2020", "02/05/2020", "03/05/2020", "04/05/2020", "05/05/2020", "06/05/2020", "07/05/2020", "08/05/2020", "09/05/2020", "10/05/2020", "11/05/2020", "12/05/2020", "13/05/2020", "14/05/2020", "15/05/2020", "16/05/2020", "17/05/2020", "18/05/2020", "19/05/2020", "20/05/2020", "21/05/2020", "22/05/2020", "23/05/2020", "24/05/2020", "25/05/2020", "26/05/2020", "27/05/2020", "28/05/2020", "29/05/2020", "30/05/2020", "31/05/2020", "01/06/2020", "02/06/2020", "03/06/2020", "04/06/2020", "05/06/2020", "06/06/2020", "07/06/2020", "08/06/2020", "09/06/2020", "10/06/2020", "11/06/2020", "12/06/2020", "13/06/2020", "14/06/2020", "15/06/2020", "16/06/2020", "17/06/2020", "18/06/2020", "19/06/2020", "20/06/2020", "21/06/2020", "22/06/2020", "23/06/2020", "24/06/2020", "25/06/2020", "26/06/2020", "27/06/2020", "28/06/2020", "29/06/2020", "30/06/2020", "01/07/2020", "02/07/2020", "03/07/2020", "04/07/2020", "05/07/2020", "06/07/2020", "07/07/2020", "08/07/2020", "09/07/2020", "10/07/2020", "11/07/2020"];
-
+              var labels = ["23/03/2020", "24/03/2020", "25/03/2020", "26/03/2020", "27/03/2020", "28/03/2020", "31/03/2020", "01/04/2020", "04/04/2020", "07/04/2020", "08/04/2020", "09/04/2020", "10/04/2020", "11/04/2020", "12/04/2020", "13/04/2020", "14/04/2020", "15/04/2020", "16/04/2020", "17/04/2020", "18/04/2020", "19/04/2020", "20/04/2020", "21/04/2020", "22/04/2020", "23/04/2020", "24/04/2020", "25/04/2020", "26/04/2020", "27/04/2020", "28/04/2020", "29/04/2020", "30/04/2020", "01/05/2020", "02/05/2020", "03/05/2020", "04/05/2020", "05/05/2020", "06/05/2020", "07/05/2020", "08/05/2020", "09/05/2020", "10/05/2020", "11/05/2020", "12/05/2020", "13/05/2020", "14/05/2020", "15/05/2020", "16/05/2020", "17/05/2020", "18/05/2020", "19/05/2020", "20/05/2020", "21/05/2020", "22/05/2020", "23/05/2020", "24/05/2020", "25/05/2020", "26/05/2020", "27/05/2020", "28/05/2020", "29/05/2020", "30/05/2020", "31/05/2020", "01/06/2020", "02/06/2020", "03/06/2020", "04/06/2020", "05/06/2020", "06/06/2020", "07/06/2020", "08/06/2020", "09/06/2020", "10/06/2020", "11/06/2020", "12/06/2020", "13/06/2020", "14/06/2020", "15/06/2020", "16/06/2020", "17/06/2020", "18/06/2020", "19/06/2020", "20/06/2020", "21/06/2020", "22/06/2020", "23/06/2020", "24/06/2020", "25/06/2020", "26/06/2020", "27/06/2020", "28/06/2020", "29/06/2020", "30/06/2020", "01/07/2020", "02/07/2020", "03/07/2020", "04/07/2020", "05/07/2020", "06/07/2020", "07/07/2020", "08/07/2020", "09/07/2020", "10/07/2020", "11/07/2020", "12/07/2020", "13/07/2020", "14/07/2020", "15/07/2020", "16/07/2020", "17/07/2020", "18/07/2020", "19/07/2020", "20/07/2020", "21/07/2020"];
+				//console.log("max" + timestamps[timestamps.length-1]);
+				//console.log("min " + timestamps[0]);
               $(slider)
                   .attr({
-                    'type':'range',
-                    'max': timestamps[129],
-                    'min':timestamps[0],
-                    'step': 1, // Change this to match the numeric interval between adjacent timestamps
-                    'value': String(timestamps[0])
+					'type':'range',
+					'max': timestamps[timestamps.length-1],
+					'min':timestamps[0],
+					'step': 1, // Change this to match the numeric interval between adjacent timestamps
+					'value': String(timestamps[0])
                   })
                   .on('input change', function() {
                       updatePropSymbols($(this).val().toString()); // update the map for the timestamp
@@ -302,7 +277,7 @@ L.Control.zoomHome = L.Control.extend({
               return slider;
             }
             sliderControl.addTo(map);
-            createTimeLabel("02/03/2020"); //The starting timestamp label
+            createTimeLabel("23/03/2020"); //The starting timestamp label
           }
 
 
@@ -316,77 +291,52 @@ L.Control.zoomHome = L.Control.extend({
               return output;
           }
           temporalLegend.addTo(map);
+
         }
-		
-		// ______________Legenda com circulos
-		function createLegend(min, max) {
-		 
-			if (min < 10) {	
-				min = 10; 
-			}
-
-		function roundNumber(inNumber) {
-
-				return (Math.round(inNumber/10) * 10);  
-		}
-
-			var legend = L.control( { position: 'bottomright' } );
-
-				legend.onAdd = function(map) {
-
-				var legendContainer = L.DomUtil.create("div", "legend");  
-				var symbolsContainer = L.DomUtil.create("div", "symbolsContainer");
-				var classes = [roundNumber(2000), roundNumber(6000), roundNumber(12000), roundNumber(24000)];
-				console.log(min);
-				console.log(max);				
-				var legendCircle;  
-				var lastRadius = 0;
-				var currentRadius;
-				var margin;
-		
-		L.DomEvent.addListener(legendContainer, 'mousedown', function(e) { 
-			L.DomEvent.stopPropagation(e); 
-		});  
-
-		$(legendContainer).append('<FONT SIZE=2 style = "font-family:verdana"><b>Número de casos <br> <br>confirmados</b> <br> <br> <br> </font>  <FONT SIZE=1 style = "font-family:verdana"> Fonte dos dados: <a href="https://covid19.min-saude.pt/relatorio-de-situacao/" target="_blank">DGS</a> <br> <br> </font>');
-		
-		for (var i = 0; i <= classes.length-1; i++) {  
-
-			legendCircle = L.DomUtil.create("div", "legendCircle");  
 			
-			currentRadius = calcPropRadius(classes[i]);
-			console.log(currentRadius);
-
-			margin = -currentRadius - lastRadius - 2;
-
-			$(legendCircle).attr("style", "width: " + currentRadius*2 + 
-				"px; height: " + currentRadius*2 + 
-				"px; margin-left: " + margin + "px" );	
-			$(legendCircle).append("<span class='legendValue'>"+classes[i]+"</span>");
-
-			$(symbolsContainer).append(legendCircle);
-
-			lastRadius = currentRadius;
-			
-			}
-
-		$(legendContainer).append(symbolsContainer); 
-
-		return legendContainer; 
-
-		};
-
-		legend.addTo(map);  
-	}   // end createLegend();
-	
 		
-	// Creating scale control
-			var scale = L.control.scale();
-			scale.addTo(map);
-			
-	// Creating Zoom Home
-			var zoomHome = new L.Control.zoomHome();
-			zoomHome.addTo(map);			
+	function drawLegend(min, max) {
+			   //var largeDiameter = calcPropRadius(data.features[0].properties.N) * 2,
+                  //smallDiameter = largeDiameter/2;
+			  
+			  //var largeDiameter = Math.sqrt(1000*5/Math.PI),
+                  //smallDiameter = largeDiameter/2;
+			    var largeDiameter = Math.sqrt((max*1.2)/Math.PI)*2;
+				var smallDiameter = largeDiameter/2;
+				console.log("largeDiameter " + max);
+				console.log("smallDiameter " + min);
+              $("#legend").css('height', largeDiameter.toFixed());
+
+              $('#legend-large').css({
+                  'width': largeDiameter.toFixed(),
+                  'height': largeDiameter.toFixed()
+              })
+
+              $("#legend-large-label").html(max.toLocaleString());
+
+              $("#legend-large-label").css({
+                  'left': largeDiameter + 30,
+                  'top' : -8
+              });
+
+              $('#legend-small').css({
+                  'width': smallDiameter.toFixed(),
+                  'height': smallDiameter.toFixed(),
+                  'top': largeDiameter - smallDiameter,
+                  'left': smallDiameter/2
+              })
+
+              $("#legend-small-label").html((max/2).toLocaleString());
+
+              $("#legend-small-label").css({
+                  'top': smallDiameter - 8,
+                  'left': largeDiameter + 30
+              });
+
+              $("<hr class='large'>").insertBefore("#legend-large-label")
+              $("<hr class='small'>").insertBefore("#legend-small-label").css('top', largeDiameter - smallDiameter - 8);
+
+        }		
 
       </script>
 
