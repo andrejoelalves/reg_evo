@@ -28,7 +28,7 @@
 		<script src="https://unpkg.com/esri-leaflet@2.4.1/dist/esri-leaflet.js" integrity="sha512-xY2smLIHKirD03vHKDJ2u4pqeHA7OQZZ27EjtqmuhDguxiUvdsOuXMwkg16PQrm9cgTmXtoxA6kwr8KBy3cdcw=="crossorigin=""></script>
 		
 	<!--Mapa de base cinzento-->		
-		<script type="text/javascript" src="importados.geojson"></script>
+		<script type="text/javascript" src="casos.geojson"></script>
 	
 	
       <style>
@@ -154,7 +154,7 @@ L.Control.zoomHome = L.Control.extend({
 			});
 			
 			
-			geojson = L.geoJson(x, {
+			geojson = L.geoJson(base, {
 		style: style,
 		}).addTo(map);
 			
